@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import patch, MagicMock, call
 
+from datetime import datetime
+
 from lifeguard_notification_msteams.notifications import MSTeamsNotificationBase
 
 MOCK_LOGGER = MagicMock(name="logger")
@@ -46,14 +48,16 @@ class MSTeamsNotificationBaseTest(unittest.TestCase):
 
     @patch("lifeguard_notification_msteams.notifications.logger", MOCK_LOGGER)
     @patch("lifeguard_notification_msteams.notifications.pymsteams", MOCK_MSTEAMS)
-    def test_init_thread_with_multiples_messages(self):
+    @patch("lifeguard_notification_msteams.notifications.datetime")
+    def test_init_thread_with_multiples_messages(self, mock_datetime):
+        mock_datetime.now.return_value = datetime(2022, 10, 11)
 
         threads = self.notification.init_thread(["line1", "line2"], {})
 
         self.mock_card.title.assert_called_with("Problem Found")
         self.mock_card.text.assert_called_with("line1\nline2")
 
-        self.assertEqual(threads, [])
+        self.assertEqual(threads, ["202210110000"])
 
     @patch("lifeguard_notification_msteams.notifications.logger", MOCK_LOGGER)
     @patch("lifeguard_notification_msteams.notifications.pymsteams", MOCK_MSTEAMS)

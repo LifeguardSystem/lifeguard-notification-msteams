@@ -3,6 +3,8 @@ Base of notification system
 """
 import pymsteams
 
+from datetime import datetime
+
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.notifications import NotificationBase
 
@@ -54,14 +56,14 @@ class MSTeamsNotificationBase(NotificationBase):
 
         self.__send_message(self.__get_title("open", settings), content, settings)
 
-        return []
+        return [datetime.now().strftime("%Y%m%d%H%M")]
 
-    def update_thread(self, _threads, content, settings):
-        logger.info("notify updating problem status")
+    def update_thread(self, threads, content, settings):
+        logger.info("notify updating problem status %s", threads)
         self.__send_message(self.__get_title("update", settings), content, settings)
 
-    def close_thread(self, _threads, content, settings):
-        logger.info("notify closing problem status")
+    def close_thread(self, threads, content, settings):
+        logger.info("notify closing problem status %s", threads)
         self.__send_message(self.__get_title("close", settings), content, settings)
 
     def __send_message(self, title, content, settings):
